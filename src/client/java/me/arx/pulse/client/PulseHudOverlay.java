@@ -16,9 +16,8 @@ import java.util.Map;
 
 public class PulseHudOverlay implements HudRenderCallback {
 
-    // 0.0 - скрыто, 1.0 - раскрыто полностью
     private float animationProgress = 0f;
-    // Флаг, чтобы один раз при заходе меню "выросло"
+
     private boolean firstLaunch = true;
 
     @Override
@@ -26,11 +25,9 @@ public class PulseHudOverlay implements HudRenderCallback {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null || client.options.hudHidden) return;
 
-        // --- 1. ЛОГИКА АНИМАЦИИ (ВХОД И КЛАВИША) ---
         boolean isPressed = InputUtil.isKeyPressed(client.getWindow().getHandle(), GLFW.GLFW_KEY_X);
         float animationSpeed = 0.05f; // Чуть медленнее для красоты
 
-        // Если это первый запуск после захода — форсим рост до 0.5 (или 1.0)
         if (firstLaunch) {
             animationProgress += animationSpeed * tickDelta;
             if (animationProgress >= 0.7f) { // Показали на 70% и хватит
@@ -45,7 +42,6 @@ public class PulseHudOverlay implements HudRenderCallback {
             }
         }
 
-        // --- 2. СБОР ПРЕДМЕТОВ (ВАЖНО ДЛЯ ВЫСОТЫ) ---
         List<ItemStack> items = new ArrayList<>();
         for (int i = 3; i >= 0; i--) {
             ItemStack s = client.player.getInventory().getArmorStack(i);
@@ -56,39 +52,29 @@ public class PulseHudOverlay implements HudRenderCallback {
 
         if (items.isEmpty()) return;
 
-        // --- 3. РАСЧЕТ ГЕОМЕТРИИ (ФИКС "ПАЛКИ") ---
         int width = client.getWindow().getScaledWidth();
         int height = client.getWindow().getScaledHeight();
 
-        // Базовая высота слота 20, при зажатом X увеличивается до 28
         float currentItemHeight = 20f + (8f * animationProgress);
         int panelWidth = (int) (85f + (20f * animationProgress));
 
-        // Высота всей панели зависит от кол-ва предметов
         int panelHeight = (int) (items.size() * currentItemHeight) + 4;
 
-        // Координаты (правый нижний угол)
         int x = width - panelWidth - 10;
         int y = height - panelHeight - 10;
 
-        // Прозрачность тоже плавная
         int alpha = (int) (140 * Math.max(0.2f, animationProgress));
         int backgroundColor = (alpha << 24);
         int borderColor = (alpha << 24) | 0x606060;
 
-        // --- 4. ОТРИСОВКА ---
-        // Рисуем основной фон
         context.fill(x, y, x + panelWidth, y + panelHeight, backgroundColor);
-        // Рисуем верхнюю границу (линию)
         context.fill(x, y, x + panelWidth, y + 1, borderColor);
 
         float currentSlotY = y + 2;
         for (ItemStack stack : items) {
-            // Рисуем иконку предмета
             int iconY = (int) (currentSlotY + (currentItemHeight - 16) / 2);
             context.drawItem(stack, x + 4, iconY);
 
-            // Текст (прочность/кол-во)
             String infoText = "";
             if (stack.isDamageable()) {
                 infoText = (stack.getMaxDamage() - stack.getDamage()) + "/" + stack.getMaxDamage();
@@ -99,7 +85,6 @@ public class PulseHudOverlay implements HudRenderCallback {
             int textY = (int) (currentSlotY + (animationProgress > 0.5f ? 4 : 6));
             context.drawText(client.textRenderer, infoText, x + 24, textY, 0xFFFFFFFF, true);
 
-            // Зачарования (только если панель достаточно широкая)
             if (animationProgress > 0.7f) {
                 renderEnchants(context, client, stack, x + 24, (int) currentSlotY + 14);
             }
@@ -108,7 +93,6 @@ public class PulseHudOverlay implements HudRenderCallback {
         }
     }
 
-    // ВЫНЕСЕННЫЙ МЕТОД (вне onHudRender!)
     private void renderEnchants(DrawContext context, MinecraftClient client, ItemStack stack, int x, int y) {
         Map<Enchantment, Integer> enchants = EnchantmentHelper.get(stack);
         if (enchants.isEmpty()) return;
