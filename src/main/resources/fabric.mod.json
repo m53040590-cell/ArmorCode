@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "pulse",
+  "version": "${version}",
+  "name": "Pulse Armor HUD",
+  "description": "",
+  "authors": ["Arx"],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/pulse/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "me.arx.pulse.client.PulseModClient"
+    ],
+    "main": [
+      "me.arx.pulse.PulseMod"
+    ]
+  },
+  "mixins": [
+    "pulse.client.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "~${minecraft_version}"
+  }
+}
