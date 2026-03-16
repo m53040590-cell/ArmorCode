@@ -26,11 +26,11 @@ public class PulseHudOverlay implements HudRenderCallback {
         if (client.player == null || client.options.hudHidden) return;
 
         boolean isPressed = InputUtil.isKeyPressed(client.getWindow().getHandle(), GLFW.GLFW_KEY_X);
-        float animationSpeed = 0.05f; // Чуть медленнее для красоты
+        float animationSpeed = 0.05f; 
 
         if (firstLaunch) {
             animationProgress += animationSpeed * tickDelta;
-            if (animationProgress >= 0.7f) { // Показали на 70% и хватит
+            if (animationProgress >= 0.7f) { 
                 firstLaunch = false;
             }
         } else {
