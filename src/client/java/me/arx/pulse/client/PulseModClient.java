@@ -17,7 +17,7 @@ public class PulseModClient implements ClientModInitializer {
         armorInfoKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.pulse.show_enchants",
                 InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_X, // <--- ВОТ ТУТ ТВОЯ КЛАВИША
+                GLFW.GLFW_KEY_X, 
                 "category.pulse.utility"
         ));
 
