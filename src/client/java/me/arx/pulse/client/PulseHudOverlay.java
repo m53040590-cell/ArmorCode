@@ -34,7 +34,7 @@ public class PulseHudOverlay implements HudRenderCallback {
                 firstLaunch = false;
             }
         } else {
-            // Обычная логика кнопки X
+            
             if (isPressed) {
                 animationProgress = Math.min(1.0f, animationProgress + animationSpeed * tickDelta);
             } else {
